@@ -41,11 +41,11 @@ def ask_streaming(question: str) -> None:
 
 
 if __name__== "__main__":
-    #Test Basic call
-    #response = ask("What is RAG pipeline in AI? Explain in 3 sentences.")
-    #print("\n--- FORMATTED OUTPUT ---")
-    #formatted_response = textwrap.fill(response, width=80)
-    #print(formatted_response)
+    Test Basic call
+    response = ask("What is RAG pipeline in AI? Explain in 3 sentences.")
+    print("\n--- FORMATTED OUTPUT ---")
+    formatted_response = textwrap.fill(response, width=80)
+    print(formatted_response)
 
     #Test Streaming
     print("Streaming response:")
