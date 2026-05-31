@@ -103,7 +103,7 @@ agent = graph.compile(checkpointer=memory)
 
 #Run the agent
 
-def run_agent(question:str ,thread_id: str ="default") -> str:
+def run_agent1(question:str ,thread_id: str ="default") -> str:
     """
     Run the agent on a question.
     thread_id keeps conversations separate — like a session ID.
@@ -115,6 +115,53 @@ def run_agent(question:str ,thread_id: str ="default") -> str:
         {"messages":[HumanMessage(content=question)]},
         config=config
     )
+    return result["messages"][-1].content
+
+def run_agent(question: str, thread_id: str = "default") -> str:
+    """
+    Run the agent on a question.
+    Shows every iteration and message in the graph.
+    """
+    config = {"configurable": {"thread_id": thread_id}}
+
+    print("\n" + "="*50)
+    print(f"Question: {question}")
+    print("="*50)
+
+    result = agent.invoke(
+        {"messages": [HumanMessage(content=question)]},
+        config=config
+    )
+
+    # Walk through every message and show what happened
+    print("\n--- Full conversation trace ---")
+    for i, message in enumerate(result["messages"]):
+        msg_type = type(message).__name__  # HumanMessage, AIMessage, ToolMessage
+
+        print(f"\nMessage {i+1}: {msg_type}")
+
+        # Human message — what you asked
+        if msg_type == "HumanMessage":
+            print(f"  You asked: {message.content}")
+
+        # AI message — what Claude decided
+        elif msg_type == "AIMessage":
+            if message.tool_calls:
+                # Claude decided to use a tool
+                for tool_call in message.tool_calls:
+                    print(f"  Claude decided: call tool '{tool_call['name']}'")
+                    print(f"  With query: {tool_call['args']}")
+            else:
+                # Claude has final answer
+                print(f"  Claude answered: {message.content[:200]}...")
+
+        # Tool message — what the tool returned
+        elif msg_type == "ToolMessage":
+            print(f"  Tool returned: {str(message.content)[:200]}...")
+
+    print(f"\n--- Total messages in trace: {len(result['messages'])} ---")
+    print(f"--- Tavily was called: {any(type(m).__name__ == 'ToolMessage' for m in result['messages'])} ---")
+
     return result["messages"][-1].content
 
 def run_agent_with_history(thread_id:str = "default") -> None:
@@ -146,7 +193,7 @@ if __name__ == "__main__":
     print("=" * 50)
 
     response = run_agent(
-        "Who won the Canada GradPrix 2026 and what date was the race?",
+        "Who won the  Saudi Arabia GradPrix 2026 and what date was the race?",
         thread_id="test-1"
     )
     print(f"Answer: {response}\n")
@@ -156,7 +203,7 @@ if __name__ == "__main__":
     print("Test 2: Memory test")
     print("=" * 50)
 
-    run_agent("My name is Subhash and I am building an AI agent.", "memory-test")
+    #run_agent("My name is Subhash and I am building an AI agent.", "memory-test")
     answer = run_agent("What is my Name and what am i building?", "memory-test")
 
     print(f"Memory test answer: {answer}\n")
@@ -165,5 +212,5 @@ if __name__ == "__main__":
     print("=" * 50)
     print("Test 3: Interactive conversation")
     print("=" * 50)
-    run_agent_with_history("interactive-session")
+    #run_agent_with_history("interactive-session")
 
