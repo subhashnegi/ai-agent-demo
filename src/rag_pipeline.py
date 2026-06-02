@@ -179,7 +179,7 @@ def load_vector_store(
     vector_store = QdrantVectorStore(
         client=client,
         collection_name="company_docs",
-        embeddings=embeddings
+        embedding=embeddings
     )
     print(f"Qdrant vector store loaded from {persist_path}")
     return vector_store
