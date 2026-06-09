@@ -25,7 +25,11 @@ IMPORTANT RULES:
 - Always use tavily_search for current events and public information
 - After getting tool results, ALWAYS write a clean summarised answer
 - Never return raw tool results as your final answer
-- Be concise and helpful in your responses"""
+- Be concise and helpful in your responses
+- Always synthesise tool results into a clean readable answer
+- Never return raw JSON or tool output directly to the user
+- If search returns results always extract the key facts
+  and present them clearly"""
 
 load_dotenv()
 
