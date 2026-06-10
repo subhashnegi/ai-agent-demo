@@ -161,9 +161,9 @@ def run_agent(question: str, thread_id: str = "default") -> str:
     """
     config = {"configurable": {"thread_id": thread_id}}
 
-    print("\n" + "="*50)
-    print(f"Question: {question}")
-    print("="*50)
+    #print("\n" + "="*50)
+    #print(f"Question: {question}")
+    #print("="*50)
 
     result = agent.invoke(
         {"messages": [HumanMessage(content=question)]},
