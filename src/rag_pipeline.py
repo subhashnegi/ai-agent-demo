@@ -245,6 +245,31 @@ def build_rag_pipeline(force_rebuild: bool=False) -> tuple:
 
     return vector_store,embeddings
 
+# ── Singleton pattern ─────────────────────────────────────────────
+# Only one QdrantClient ever created per process
+# All files import get_rag_pipeline() instead of
+# calling build_rag_pipeline() directly
+# Prevents "already accessed by another instance" error
+
+_vector_store = None
+_embeddings = None
+
+def get_rag_pipeline():
+    """
+    Returns existing pipeline if already built.
+    Creates it only once — singleton pattern.
+    Like a database connection pool —
+    open once, reuse everywhere.
+    """
+    global _vector_store, _embeddings
+
+    if _vector_store is None:
+        _vector_store, _embeddings = build_rag_pipeline(
+            force_rebuild=False
+        )
+
+    return _vector_store, _embeddings
+
 
 if __name__ == "__main__":
     vector_store, embeddings = build_rag_pipeline(force_rebuild=False)

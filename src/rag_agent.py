@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 from langchain_core.messages import SystemMessage
 import operator
 
-from rag_pipeline import build_rag_pipeline
+#from rag_pipeline import build_rag_pipeline
 
 # Add system prompt at the top of your file after imports
 SYSTEM_PROMPT = """You are a helpful TechCorp customer support assistant.
@@ -39,7 +39,9 @@ load_dotenv()
 # force_rebuild=False → loads from disk if exists (fast)
 
 print("Initialising RAG pipeline...")
-vector_store, embeddings = build_rag_pipeline(force_rebuild=False)
+#vector_store, embeddings = build_rag_pipeline(force_rebuild=False)
+from rag_pipeline import get_rag_pipeline
+vector_store, embeddings = get_rag_pipeline()
 print("RAG pipeline ready\n")
 
 # ── State ─────────────────────────────────────────────────────────
