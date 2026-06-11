@@ -1,0 +1,53 @@
+version: "3.9"
+
+services:
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: techcorp-qdrant
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - agent_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/readiness"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  agent:
+    build:
+      context: .
+    container_name: techcorp-agent
+    ports:
+      - "8000:8000"
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - TAVILY_API_KEY=${TAVILY_API_KEY}
+      - VOYAGE_API_KEY=${VOYAGE_API_KEY}
+      - LANGCHAIN_API_KEY=${LANGCHAIN_API_KEY}
+      - LANGCHAIN_TRACING_V2=${LANGCHAIN_TRACING_V2}
+      - LANGCHAIN_PROJECT=${LANGCHAIN_PROJECT}
+      - QDRANT_URL=http://qdrant:6333
+    volumes:
+      - ./data:/app/data
+    networks:
+      - agent_network
+    depends_on:
+      qdrant:
+        condition: service_healthy
+    restart: unless-stopped
+    env_file:
+      - .env
+
+networks:
+  agent_network:
+    driver: bridge
+
+volumes:
+  qdrant_data:
+    driver: local
